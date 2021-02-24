@@ -1,11 +1,10 @@
-// import '../../styles/signup.css';
-import {Field, reduxForm, stopSubmit} from "redux-form";
-import {NavLink,Redirect} from 'react-router-dom';
+import {Redirect} from 'react-router-dom';
 import {useDispatch, useSelector} from "react-redux";
 import {getCookie, signUp} from "../../reducers/auth_reducer";
-import {useRef,useState,useEffect} from "react";
+import {useState,useEffect} from "react";
 import {AiFillEye,AiFillEyeInvisible} from 'react-icons/ai';
-import './../../sass/login.scss'
+import './../../sass/login.scss';
+import {useFormik} from "formik";
 import {
     BackgroundImage,
     Button,
@@ -21,10 +20,7 @@ import {
     SignUpDiv,
     Title
 } from "./styles";
-import {InputVal} from "../others/inputs/input";
-import {Loginval} from "../../validator";
 import main_image from './../../source/images/main.jpg'
-
 
 
 
@@ -33,17 +29,15 @@ const Signup = () => {
     const submit = (data) => {
         dispatch(signUp(data))
     }
-    //DELETE THIS WHEN DEPLOY APP
     useEffect(() => {
-        submit({username: "tan48",password: 'rererewr'})
+        // submit({username: "tan48",password: 'rererewr'})
         dispatch(getCookie())
     },[])
-    //&&&&&&&&
     const username = useSelector((state) => state.auth.username)
     if (username){
-        //you are logined
         return <Redirect to={`${process.env.PUBLIC_URL}/mainpage`} />
     }
+
     return (
         <Main>
             <MainTitle>קבלת סיסמה</MainTitle>
@@ -57,42 +51,39 @@ const Signup = () => {
                 </Card>
             </LeftSide>
             <FormMain>
-                <SingupFormC onSubmit={submit} />
+                <SignupForm submit={submit} />
             </FormMain>
         </Flex>
         </Main>)
 
 }
 
-const SignupForm = (props) => {
+const SignupForm = ({submit : onSubmit}) => {
     const [pass,showPass] = useState(false);
     const togglePass = () => {
         showPass(!pass)
     }
+    const initialValues = {password: '',username : ''}
+    const {handleChange, handleSubmit, values} = useFormik({initialValues,onSubmit})
     return (
-        <SignUpDiv onSubmit={props.handleSubmit}>
+        <SignUpDiv onSubmit={handleSubmit}>
             <Container>
                 <Title>כניסה לפורטל</Title>
             </Container>
             <Inputs>
-                <Input as={Field} placeholder="username" component={InputVal} name={'username'} autoComplete={'off'}
-                validate={Loginval} maxLength={'15'}/>
+                <Input  placeholder="username" onChange={handleChange} name={'username'} value={values.username}
+                        autoComplete={'off'} maxLength={'15'}/>
                 <Relative>
-                    <Input as={Field} type={pass ? 'text' : 'password'}  placeholder="password"
-                           component={InputVal} name={'password'} autoComplete={'off'} maxLength={'15'}
-                           validate={Loginval}/>
+                    <Input  placeholder="username" onChange={handleChange} name={'password'} value={values.password}
+                            autoComplete={'off'} maxLength={'15'}/>
                     {pass ? <AiFillEye onClick={togglePass}
                                        className={'clicable-eye-icon'}/> :
                         <AiFillEyeInvisible onClick={togglePass} className={'clicable-eye-icon'} />}
                 </Relative>
-                <Error>{props.error}</Error>
-                <Button color={'true'}>Login</Button>
+                {/*<Error>{props.error}</Error>*/}
+                <Button color={'true'} onClick={handleSubmit}>Login</Button>
             </Inputs>
         </SignUpDiv>
     )
 }
-const SingupFormC = reduxForm({
-    form : 'sign_up'
-})(SignupForm)
-
 export default Signup;

@@ -113,5 +113,4 @@ router.post("/new_pensioner", islogin, async (req, res) => {
     "couple_id":couple_id});
   res.send(newpensioner);
 });
-// git@github.com:gearonix/pensioners-app.git
 module.exports = router;

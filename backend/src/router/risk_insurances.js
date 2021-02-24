@@ -34,6 +34,7 @@ router.put("/update", async (req, res) => {
         report_year, period_report, last_upadete_of_this_screen, total_annual_premium, insuarunce_amount,
         insurance_agency_handles, agent_name, agent_telephone, agent_mail, remarks
     } = req.body;
+    console.log(req.body)
     const status = await Risk_insurance.update(
         {
             manufacture_name: manufacture_name,
