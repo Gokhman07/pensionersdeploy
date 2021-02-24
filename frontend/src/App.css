@@ -1,0 +1,6 @@
+.SpreadsheetGridInput{
+    text-align: right !important;
+}
+.SpreadsheetGrid__headCell{
+    justify-content: flex-end !important;
+}
