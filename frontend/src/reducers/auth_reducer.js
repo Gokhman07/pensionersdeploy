@@ -1,27 +1,20 @@
-import axios from "axios";
-import {createSlice,createAsyncThunk} from '@reduxjs/toolkit';
+import {createSlice, createAsyncThunk} from '@reduxjs/toolkit';
 import api from "../API";
-import {stopSubmit} from "redux-form";
 
 const init = {
     username: null,
-    id : null,
-    token : null
+    id: null,
+    token: null
 }
-// /:username/:password
 export const signUp = createAsyncThunk(
     'GET-USERS',
     async (data, {dispatch}) => {
-        //Когда бекенд готов будет, нужно открыть этот путь
         const response = await api.login(data)
-        if (response.data.status!==200){
-            dispatch(stopSubmit('sign_up',{_error : 'Wrong name or password.'}))
+        if (response.data.status !== 200) {
             return
         }
-        const {id,token,login:username} = response.data.data
-        dispatch(signUpAct({username,id,token}))
-
-        // dispatch(signUpAct(data))
+        const {id, token, login: username} = response.data.data
+        dispatch(signUpAct({username, id, token}))
     }
 )
 export const getCookie = createAsyncThunk('GET_COOKIE',
@@ -30,21 +23,34 @@ export const getCookie = createAsyncThunk('GET_COOKIE',
         console.log(response)
     })
 
-const auth_reducer=createSlice({
-    name : 'auth',
-    initialState : init,
-    reducers : {
-        signUpAct(state,action){
-            const {username,id,token} = action.payload
-            return {...state,username,id,token}
+const auth_reducer = createSlice({
+    name: 'auth',
+    initialState: init,
+    reducers: {
+        signUpAct(state, action) {
+            const {username, id, token} = action.payload
+            return {...state, username, id, token}
         }
     },
-    extraReducers: {
-    }
+    extraReducers: {}
 })
 
-export let {signUpAct} = auth_reducer.actions;
+export const saveTable = createAsyncThunk('SAVE_TABLE',
+    async (data) => {
+        const response = await api.changeTable(data)
+    })
+export const getTableData = createAsyncThunk('GET_TABLE_DATA',
+    async (id) => {
+        const {data} = await api.getTableData(id)
+        if (data.length == 0) {
+            return false
+        }
+        return data[0]
+    }
+)
 
+
+export let {signUpAct} = auth_reducer.actions;
 
 
 export default auth_reducer.reducer
