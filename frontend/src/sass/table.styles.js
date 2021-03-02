@@ -49,7 +49,7 @@ export const Header = styled.div`
   border-bottom: none;
   padding: 10px 8px 8px 8px;
   text-align: left;
-  background-color: #827789;
+  background-color: ${props => props.color ? props.color : '#827789'};
   -webkit-box-align: center;
   -webkit-align-items: center;
   -ms-flex-align: center;
@@ -67,12 +67,26 @@ export const Input = styled.input`
   outline: none;
   text-align: right;
   font-size: 22px;
-
+  color : ${props => props.error ? 'rgba(224, 60, 60, 1)' : 'rgba(64, 62, 62, 1)'}
 `
 export const Title = styled.h1`
   font-size: 40px;
-  color : #0D4362;
+  color : ${props => props.color ? props.color : '#0D4362'};
   text-align: center;
   margin-top: 35px;
   margin-bottom: 35px;
+`
+export const GTitle = styled(Title)`
+  font-size: 35px;
+  margin-bottom: 10px;
+  margin-top: 10px;
+`
+export const Link = styled.span`
+  font-size: 26px;
+  color : #274EB1 !important;
+  position: absolute;
+  left: 5%;
+  top: ${props => props.two ? '10%' : '5%'};
+  text-decoration: underline;
+  cursor: pointer                                                      ;
 `

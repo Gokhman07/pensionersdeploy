@@ -6,21 +6,24 @@ const init = {
     id: null,
     token: null
 }
+
 export const signUp = createAsyncThunk(
     'GET-USERS',
     async (data, {dispatch}) => {
         const response = await api.login(data)
         if (response.data.status !== 200) {
-            return
+            return true
         }
         const {id, token, login: username} = response.data.data
         dispatch(signUpAct({username, id, token}))
     }
 )
 export const getCookie = createAsyncThunk('GET_COOKIE',
-    async () => {
+    async (q, {dispatch}) => {
         const response = await api.getCookie()
-        console.log(response)
+        if (response.data.status === 200) {
+            dispatch(signUpAct(response.data.data))
+        }
     })
 
 const auth_reducer = createSlice({
@@ -48,7 +51,23 @@ export const getTableData = createAsyncThunk('GET_TABLE_DATA',
         return data[0]
     }
 )
-
+export const logout = createAsyncThunk('LOGOUT',
+    async (username, {dispatch}) => {
+        await api.logout(username);
+        dispatch(signUpAct(init))
+    }
+)
+export const getPensionFunds = createAsyncThunk('GET_PENSION_FUNDS',
+    async (id,{dispatch}) => {
+    const response = await api.getPensionFunds(id);
+    return response.data
+}
+)
+export const updatePensionFunds = createAsyncThunk('UPDATE_PENSION_FUNDS',
+    async (data,{dispatch}) => {
+        const response = await api.updatePensionFunds(data.data,data.id);
+    }
+)
 
 export let {signUpAct} = auth_reducer.actions;
 

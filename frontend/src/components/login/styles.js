@@ -55,6 +55,13 @@ export const rotate = keyframes`
     transform: rotate(360deg);
   }
 `
+export const ButtonContainer = styled.button`
+  width: 150px;
+  margin-bottom: 300px;
+  background: transparent;
+  border: none;
+  box-shadow: none;
+`
 export const Button = styled.button.attrs(props => ({
     // disabled : 'true'
 }))`
@@ -84,6 +91,7 @@ export const Input = styled.input`
   border-bottom: 1px solid #eaeaea;
   width: 100%;`
 export const Relative = styled.div`
+        margin-top: 10px;
   position: relative;`
 
 export const Error = styled.span`
@@ -101,7 +109,7 @@ export const Main = styled.div`
   height: 100vh;
   //display: flex;
 `
-export const Card = styled.div`
+export const CardStyle = styled.div`
   width: 400px;
   height: 300px;
   border-radius: 30px;
@@ -137,5 +145,4 @@ export const BackgroundImage = styled.img`
   left: 0;
   top: 0;
   opacity: 1;
-  
 `

@@ -1,31 +1,16 @@
-import {Cell, Input, Item, Table, Header,Title} from './table.styles';
+import {Cell, Input, Item, Table, Header, Title, Link} from '../../sass/table.styles';
 import { Formik} from "formik";
 import {useDispatch, useSelector} from "react-redux";
-import {getTableData, saveTable} from "../../reducers/auth_reducer";
+import {getTableData, logout, saveTable} from "../../reducers/auth_reducer";
 import {formatDate} from "../../tools";
 import React, {useState, useEffect} from 'react';
+import {tableValidator} from "../../validator";
+import {Skeleton,Card} from "antd";
+import {NavLink, Redirect} from 'react-router-dom'
 
-const init = {
-    id_pensioner: '',
-    manufacture_name: '',
-    pos_type: '',
-    collective_name: '',
-    cash_opening_date: formatDate(new Date()),
-    report_year: '',
-    period_report: 0,
-    last_upadete_of_this_screen: '',
-    total_annual_premium: 0,
-    insuarunce_amount: 0,
-    insurance_agency_handles: '',
-    agent_name: '',
-    agent_telephone: '',
-    agent_mail: '',
-    remarks: ''
-}
-
-const TableMain = () => {
-    const id_pensioner = useSelector((state) => state.auth.id);
-    const [initialValues, setInitValues] = useState(init)
+const Risk_insurances_table = () => {
+    const {id: id_pensioner,username} = useSelector((state) => state.auth);
+    const [initialValues, setInitValues] = useState(null)
     const [toogle, setToggle] = useState(false)
     const dispatch = useDispatch()
     useEffect(async () => {
@@ -38,13 +23,21 @@ const TableMain = () => {
     }, [])
 
     function onSubmit(data) {
+        console.log(data)
         dispatch(saveTable({...data, id_pensioner}))
     }
-
-    if (!toogle) return <></>
+    const logoutCallback = () =>{
+        dispatch(logout(username))
+    }
+    if  (!username) return <Redirect to={`${process.env.PUBLIC_URL}/login`} />
+    if (!toogle) return <Preloader logout={logoutCallback} gtitle={'ביטוח סיכונים'} />
     return <>
         <Title>ביטוח סיכונים</Title>
-        <Formik initialValues={initialValues} onSubmit={onSubmit}>
+        <Link onClick={logoutCallback}>Logout</Link>
+        <Link two={true} as={NavLink} to={`${process.env.PUBLIC_URL}/pensionfunds`}>
+            Pension Funds
+        </Link>
+        <Formik initialValues={initialValues} onSubmit={onSubmit} validate={tableValidator}>
             {formik => (
                 <>
                     <Table>
@@ -69,19 +62,36 @@ const TableMain = () => {
                     <Table>
                         {createItem('לֵפוֹן', 'remarks', formik)}
                     </Table>
+
                 </>
             )}
         </Formik>
     </>
 }
+export const Preloader = ({logout,gtitle}) => (
+    <>
+    <Link onClick={logout}>Logout</Link>
+    <Title>{gtitle}</Title>
+    <Card
+    style={{ width: 1200, marginTop: 170 ,transform: 'scale(1.5)',margin: '0 auto'}}
+>
+    <Skeleton loading={true} avatar active>
+    </Skeleton>
+</Card>
+<Card
+    style={{ width: 1200, marginTop: 140 ,transform: 'scale(1.5)',margin: '0 auto'}}
+>
+    <Skeleton loading={true} avatar active>
+    </Skeleton>
+</Card></>)
 
 const createItem = (title, value, options) => {
-    const {handleChange, handleSubmit, values} = options
+    const {handleChange, handleSubmit, values,errors} = options
     return <Item>
         <Header>{title}</Header>
-        <Cell><Input onChange={handleChange} onBlur={handleSubmit} value={values[value]}
-                     name={value}/></Cell>
+        <Cell><Input onChange={handleChange} onBlur={handleSubmit} value={values[value] || ''}
+                     name={value} error={errors[value]}/></Cell>
     </Item>
 }
 
-export default TableMain
+export default Risk_insurances_table

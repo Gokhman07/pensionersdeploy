@@ -6,12 +6,12 @@ import {AiFillEye,AiFillEyeInvisible} from 'react-icons/ai';
 import './../../sass/login.scss';
 import {useFormik} from "formik";
 import {
-    BackgroundImage,
-    Button,
-    Card, CardTitle,
+    BackgroundImage, ButtonContainer,
+
+    CardStyle, CardTitle,
     Container,
     Error, Flex, FormMain,
-    Input,
+
     Inputs,
     LeftSide,
     Link,
@@ -20,14 +20,20 @@ import {
     SignUpDiv,
     Title
 } from "./styles";
+import {Input,Button,Card} from 'antd'
 import main_image from './../../source/images/main.jpg'
-
+import {loginVal} from "../../validator";
+import { EyeInvisibleOutlined, EyeTwoTone } from '@ant-design/icons';
 
 
 const Signup = () => {
     const dispatch = useDispatch();
-    const submit = (data) => {
-        dispatch(signUp(data))
+    const [error,throwError] = useState('')
+    const submit = async (data) => {
+        const {payload : response} = await dispatch(signUp(data))
+        if (response){
+            throwError('Wrong password or username')
+        }
     }
     useEffect(() => {
         // submit({username: "tan48",password: 'rererewr'})
@@ -37,34 +43,29 @@ const Signup = () => {
     if (username){
         return <Redirect to={`${process.env.PUBLIC_URL}/mainpage`} />
     }
-
     return (
         <Main>
             <MainTitle>קבלת סיסמה</MainTitle>
             <Flex>
             <LeftSide >
                 <BackgroundImage src={main_image}/>
-                <Card>
+                <CardStyle>
                     <CardTitle> עצה טובה</CardTitle>
                     <CardTitle size={20} mt={0}>כניסה לפורטל</CardTitle>
                     <CardTitle size={25} mt={40} color={'white'}>האידריכל'ם של הפנסיה שלך!</CardTitle>
-                </Card>
+                </CardStyle>
             </LeftSide>
             <FormMain>
-                <SignupForm submit={submit} />
+                <SignupForm submit={submit} error={error}/>
             </FormMain>
         </Flex>
         </Main>)
 
 }
 
-const SignupForm = ({submit : onSubmit}) => {
-    const [pass,showPass] = useState(false);
-    const togglePass = () => {
-        showPass(!pass)
-    }
+const SignupForm = ({submit : onSubmit,error : error}) => {
     const initialValues = {password: '',username : ''}
-    const {handleChange, handleSubmit, values} = useFormik({initialValues,onSubmit})
+    const {handleChange, handleSubmit, values,errors} = useFormik({initialValues,onSubmit,validate : loginVal})
     return (
         <SignUpDiv onSubmit={handleSubmit}>
             <Container>
@@ -74,14 +75,14 @@ const SignupForm = ({submit : onSubmit}) => {
                 <Input  placeholder="username" onChange={handleChange} name={'username'} value={values.username}
                         autoComplete={'off'} maxLength={'15'}/>
                 <Relative>
-                    <Input  placeholder="username" onChange={handleChange} name={'password'} value={values.password}
-                            autoComplete={'off'} maxLength={'15'}/>
-                    {pass ? <AiFillEye onClick={togglePass}
-                                       className={'clicable-eye-icon'}/> :
-                        <AiFillEyeInvisible onClick={togglePass} className={'clicable-eye-icon'} />}
+                    <Input.Password   iconRender={visible => (visible ? <EyeTwoTone /> : <EyeInvisibleOutlined />)}
+                                      placeholder="password" onChange={handleChange}
+                                      name={'password'} value={values.password}
+                            />
                 </Relative>
-                {/*<Error>{props.error}</Error>*/}
-                <Button color={'true'} onClick={handleSubmit}>Login</Button>
+                <Error>{errors.error || error}</Error>
+                <ButtonContainer><Button type="primary" onClick={handleSubmit}
+                                         style={{width: '100%'}}>Login</Button></ButtonContainer>
             </Inputs>
         </SignUpDiv>
     )

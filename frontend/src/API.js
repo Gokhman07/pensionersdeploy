@@ -16,6 +16,21 @@ const API = {
     },
     getCookie(){
         return instance.get('/pensioner/auth')
+    },
+    logout(username){
+        return instance.put('/pensioner/logout',{username})
+    },
+    getPensionFunds(id){
+        return instance.get(`/pension_funds/${id}`)
+    },
+    updatePensionFunds(data,id){
+        return instance.put(`/pension_funds/${id}`,data)
+    },
+    getPensionerData(id){
+        return instance.get(`pensioner/agent_info/${id}`)
+    },
+    updatePensionerData(data,id){
+        return instance.put('pensioner/agent_info/',{data,id})
     }
 }
 export default API
